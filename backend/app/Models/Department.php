@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Department extends Model
 {
+    protected $fillable = [
+        'name',
+        'code',
+        'description',
+    ];
+
     public function students(): HasMany
     {
         return $this->hasMany(Student::class);
@@ -21,4 +27,4 @@ class Department extends Model
     {
         return $this->hasMany(Course::class);
     }
-}   
+}
