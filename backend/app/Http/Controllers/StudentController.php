@@ -16,6 +16,46 @@ class StudentController extends Controller
         return response()->json($students);
     }
 
+    public function show($id)
+    {
+        $student = Student::with(['user', 'department'])->find($id);
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'Student not found'
+            ], 404);
+        }
+
+        return response()->json($student);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $student = Student::find($id);
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'Student not found'
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'department_id' => 'sometimes|required|exists:departments,id',
+            'student_id' => 'sometimes|required|string|unique:students,student_id,' . $student->id,
+            'phone' => 'sometimes|nullable|string|max:20',
+            'address' => 'sometimes|nullable|string',
+            'date_of_birth' => 'sometimes|nullable|date',
+            'gender' => 'sometimes|nullable|string|max:20',
+            'enrollment_year' => 'sometimes|required|integer',
+        ]);
+
+        $student->update($validated);
+
+        return response()->json(
+            $student->load(['user', 'department'])
+        );
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
