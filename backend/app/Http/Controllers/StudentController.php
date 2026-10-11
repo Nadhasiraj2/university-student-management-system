@@ -94,4 +94,28 @@ class StudentController extends Controller
             201
         );
     }
+
+    public function destroy($id)
+    {
+        $student = Student::find($id);
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'Student not found'
+            ], 404);
+        }
+
+        $user = User::find($student->user_id);
+
+        $student->delete();
+
+        if ($user) {
+            $user->delete();
+        }
+
+        return response()->json([
+            'message' => 'Student deleted successfully'
+        ]);
+    }
+
 }
